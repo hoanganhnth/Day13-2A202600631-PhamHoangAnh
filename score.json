@@ -1,21 +1,21 @@
 {
   "team": "PhamHoangAnh",
-  "phase": "public",
-  "headline": 100.0,
+  "phase": "private",
+  "headline": 98.12,
   "sub": {
-    "correct": 0.8667,
-    "quality": 0.919,
+    "correct": 0.6775,
+    "quality": 0.8065,
     "error": 1.0,
-    "latency": 0.7579,
-    "cost": 0.7337,
-    "drift": 0.6425,
-    "prompt": 0.8824
+    "latency": 0.7524,
+    "cost": 0.5841,
+    "drift": 0.8232,
+    "prompt": 0.8063
   },
-  "diag_f1": 0.924,
-  "n": 120,
-  "n_correct": 98,
+  "diag_f1": 0.973,
+  "n": 80,
+  "n_correct": 50,
   "judge_mode": "offline",
   "weights_hash": "e81a8ed58d93",
-  "key_hash": "9a800fa6968d",
-  "sig": "f55b1ca9bb19af8b9356605ef5dac02e058277d495135aa0291518f2b80eb99a"
+  "key_hash": "7e3905b75db0",
+  "sig": "7872f5c0f8668405fbb4510852ce650fb3ba79a3cc235786f4ce332b65e14ae7"
 }
