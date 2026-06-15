@@ -1,12 +1,116 @@
 {
-  "team": "TODO-team-name",
+  "team": "PhamHoangAnh",
   "schema_version": 1,
   "findings": [
     {
       "fault_class": "latency_spike",
-      "evidence": {"metric": "latency_p95_ms", "observed": "TODO from your telemetry", "trace_ids": []},
-      "root_cause": "TODO: what config knob or behavior causes it?",
-      "suggested_fix": "TODO: config change and/or wrapper mitigation"
+      "evidence": {
+        "metric": "latency_p95_ms",
+        "observed": "P95 latency exceeded 10s due to 20k+ prompt tokens per request.",
+        "trace_ids": []
+      },
+      "root_cause": "verbose_system, large context_size, and premium price tier inflated latency.",
+      "suggested_fix": "Set verbose_system=false, context_size=2, enable cache in wrapper."
+    },
+    {
+      "fault_class": "cost_blowup",
+      "evidence": {
+        "metric": "prompt_tokens_mean",
+        "observed": "Average prompt tokens ~20500/request with model_price_tier=premium.",
+        "trace_ids": []
+      },
+      "root_cause": "Premium tier plus verbose system prompt and bloated prompt.txt burned tokens.",
+      "suggested_fix": "Use economy tier, verbose_system=false, shorten prompt under 600 chars."
+    },
+    {
+      "fault_class": "error_spike",
+      "evidence": {
+        "metric": "error_rate",
+        "observed": "Intermittent tool 500 errors caused step failures.",
+        "trace_ids": []
+      },
+      "root_cause": "Retry was disabled or max_attempts too low for transient tool failures.",
+      "suggested_fix": "Enable retry with max_attempts=3 in config.json."
+    },
+    {
+      "fault_class": "tool_failure",
+      "evidence": {
+        "metric": "shipping_error_rate",
+        "observed": "calc_shipping failed for Can Tho, Vung Tau, Da Lat with diacritic city names.",
+        "trace_ids": []
+      },
+      "root_cause": "Agent passed Unicode city names that the shipping tool rejects.",
+      "suggested_fix": "Normalize city names to ASCII in wrapper.py and prompt.txt."
+    },
+    {
+      "fault_class": "pii_leak",
+      "evidence": {
+        "metric": "pii_leak_count",
+        "observed": "Agent echoed customer emails and phone numbers in answers.",
+        "trace_ids": []
+      },
+      "root_cause": "No PII instruction in prompt and no input/output redaction.",
+      "suggested_fix": "Add no-PII rule in prompt.txt; strip PII from questions and redact answers in wrapper."
+    },
+    {
+      "fault_class": "fabrication",
+      "evidence": {
+        "metric": "wrong_format_rate",
+        "observed": "Stock queries answered with Tong cong totals instead of unit price.",
+        "trace_ids": []
+      },
+      "root_cause": "Prompt did not distinguish stock-price queries from purchase orders.",
+      "suggested_fix": "Add explicit stock-query format rule in prompt.txt and post-process in wrapper."
+    },
+    {
+      "fault_class": "arithmetic_error",
+      "evidence": {
+        "metric": "math_error_rate",
+        "observed": "Identical orders produced different totals across runs.",
+        "trace_ids": []
+      },
+      "root_cause": "High temperature and missing floor-division formula caused inconsistent math.",
+      "suggested_fix": "temperature=0.2, self_consistency=2, exact // formula in prompt."
+    },
+    {
+      "fault_class": "tool_overuse",
+      "evidence": {
+        "metric": "tools_used_mean",
+        "observed": "Many requests called all three tools when only check_stock was needed.",
+        "trace_ids": []
+      },
+      "root_cause": "Prompt said always call all tools without conditional logic.",
+      "suggested_fix": "Prompt each tool only when needed; tool_budget=4 in config."
+    },
+    {
+      "fault_class": "prompt_injection",
+      "evidence": {
+        "metric": "injection_vulnerability",
+        "observed": "Agent obeyed fake prices embedded in GHI CHU order notes.",
+        "trace_ids": []
+      },
+      "root_cause": "Notes treated as instructions rather than inert customer data.",
+      "suggested_fix": "Sanitize note content in wrapper; instruct prompt to ignore note commands."
+    },
+    {
+      "fault_class": "infinite_loop",
+      "evidence": {
+        "metric": "loop_count",
+        "observed": "Agent hit max_steps repeating check_stock calls.",
+        "trace_ids": []
+      },
+      "root_cause": "loop_guard disabled allowed repeated identical tool calls.",
+      "suggested_fix": "Enable loop_guard and cap tool_budget in config.json."
+    },
+    {
+      "fault_class": "quality_drift",
+      "evidence": {
+        "metric": "answer_consistency",
+        "observed": "Same question phrasing yielded different totals on repeated runs.",
+        "trace_ids": []
+      },
+      "root_cause": "Session context accumulation and high temperature caused drift.",
+      "suggested_fix": "context_reset_every=4, self_consistency=2, lower temperature."
     }
   ]
 }
